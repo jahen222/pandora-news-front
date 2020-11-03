@@ -1,0 +1,20 @@
+
+import "../assets/images/favicon.png";
+import "../assets/css/bootstrap.min.css";
+import "../assets/css/swiper.min.css";
+import "../assets/fonts/fontawesome/font-awesome.min.css";
+import "../assets/css/owl.theme.default.min.css";
+import "../assets/css/animate.min.css";
+import "../assets/css/nprogress.css";
+import "../assets/css/style.css";
+import "../assets/js/jquery.min.js";
+import "../assets/js/swiper.min.js";
+import "../assets/js/nprogress.js";
+// import "../assets/js/bootstrap.min.js";
+// import "../assets/css/owl.carousel.min.css";
+// import "../assets/js/owl.carousel.min.js";
+// import "../assets/js/jquery.waypoints.min.js";
+// import "../assets/js/easy-waypoint-animate.js";
+// import "../assets/js/jquery.countup.js";
+// import "../assets/js/jquery.newsTicker.min.js";
+// import "../assets/js/scripts.js";

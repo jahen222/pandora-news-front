@@ -67,6 +67,13 @@ module.exports = {
 
 
     // allow debugger during development only
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+
+    // allow some rules on js
+    'quotes': 'off',
+    'comma-dangle': 'off',
+    'semi': 'off',
+    'space-before-function-paren': 'off',
+    'no-tabs': 'off'
   }
 }
