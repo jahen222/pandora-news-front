@@ -93,7 +93,11 @@
           <!-- /.Block Style 1 -->
           <!-- Block Style 9 -->
           <div class="col-12 col-lg-5">
-            <NewsSection03 />
+            <NewsSection03 v-bind:articles="articles ? articles : []" />
+            <div class="load-more-btn">
+              <a @click="moreArticles()" class="btn">Load More</a>
+            </div>
+            <div class="ts-space30"></div>
           </div>
           <!-- /.Block Style 9 -->
           <!-- Block Style 10, 11 -->
@@ -123,6 +127,7 @@ import EditorPicks from "../components/home/EditorPicks";
 import NewsSection03 from "../components/home/NewsSection03";
 import TerndingNews from "../components/home/TerndingNews";
 import RecentComments from "../components/home/RecentComments";
+import gql from "graphql-tag";
 
 export default {
   name: "PageIndex",
@@ -140,5 +145,47 @@ export default {
     TerndingNews,
     RecentComments,
   },
+  data() {
+    return {
+      articles: [],
+      start: 0,
+      limit: 20,
+    };
+  },
+  apollo: {
+    articles: {
+      query: gql`
+        query articles($limit: Int!, $start: Int!) {
+          articles(limit: $limit, start: $start, sort: "published_at:DESC") {
+            id
+            title
+            language
+            media {
+              url
+            }
+            article_subcategory {
+              id
+              name
+              article_category {
+                id
+                name
+              }
+            }
+          }
+        }
+      `,
+      variables() {
+        return {
+          limit: this.limit,
+          start: this.start,
+        };
+      },
+    },
+  },
+  methods: {
+    moreArticles: function () {
+      console.log("hola mundo: ", this.articles[0].media[0].url);
+    }
+  }
 };
 </script>
