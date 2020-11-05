@@ -7,14 +7,14 @@
           <div class="row">
             <div class="left col-6">
               <div class="today">
-                <p>Today</p>
+                <p>{{ dateToday }}</p>
               </div>
               <div class="searchbar">
                 <form action="#" method="post">
                   <input
                     type="text"
                     name="search"
-                    placeholder="I'm searching for .."
+                    :placeholder="$t('layoutSearchBarPlaceholder')"
                     required
                   />
                   <button type="submit">
@@ -27,7 +27,10 @@
               </div>
             </div>
             <div class="right col-6">
-              <div class="notification">
+              <div class="language-switcher">
+                <LanguageSwitcher />
+              </div>
+              <div class="notification" style="display: none">
                 <img src="../assets/images/svg/161-alarm.svg" alt="Zola" />
                 <span>11</span>
                 <div class="content-notification">
@@ -310,7 +313,7 @@
                   </div>
                 </div>
               </div>
-              <div class="user-profile">
+              <div class="user-profile" style="display: none">
                 <img src="../assets/images/user1.jpg" alt="Zola" />
                 <p>Fred Barry <i class="fa fa-chevron-down"></i></p>
                 <div class="user-menu">
@@ -336,105 +339,11 @@
           <!-- /.Logo -->
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
-              <li class="nav-item">
-                <a href="World.html" class="nav-link">World</a>
-              </li>
-              <li class="nav-item">
-                <a href="Politics.html" class="nav-link">Politics</a>
-              </li>
-              <li class="nav-item dropdown-submenu dropdown">
-                <a
-                  class="dropdown-item dropdown-toggle nav-link"
-                  href="#"
-                  role="button"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                >
-                  Business
-                </a>
-                <ul class="dropdown-menu">
-                  <li>
-                    <a href="Aerospace-and-defence.html" class="dropdown-item"
-                      >Aerospace and Defense</a
-                    >
-                  </li>
-                  <li>
-                    <a href="Finance.html" class="dropdown-item">Finance</a>
-                  </li>
-                  <li><a href="Deals.html" class="dropdown-item">Deals</a></li>
-                  <li>
-                    <a href="Economy.html" class="dropdown-item">Economy</a>
-                  </li>
-                  <li>
-                    <a href="Energy.html" class="dropdown-item">Energy</a>
-                  </li>
-                  <li class="dropdown-submenu dropdown">
-                    <a
-                      class="dropdown-item dropdown-toggle"
-                      href="#"
-                      id="navbarSubDropdown"
-                      role="button"
-                      data-toggle="dropdown"
-                      aria-haspopup="true"
-                      aria-expanded="false"
-                    >
-                      Entrepreneurship
-                    </a>
-                    <ul
-                      class="dropdown-menu"
-                      aria-labelledby="navbarSubDropdown"
-                    >
-                      <li>
-                        <a href="Journal.html" class="dropdown-item">
-                          Journal</a
-                        >
-                      </li>
-                      <li>
-                        <a href="Business-Economics.html" class="dropdown-item">
-                          Business Economics</a
-                        >
-                      </li>
-                      <li>
-                        <a href="Journal-of-Product.html" class="dropdown-item">
-                          Journal of Product</a
-                        >
-                      </li>
-                      <li>
-                        <a href="Innovation.html" class="dropdown-item">
-                          Innovation</a
-                        >
-                      </li>
-                      <li>
-                        <a
-                          href="Small-Business-Journal.html"
-                          class="dropdown-item"
-                        >
-                          Small Business Journal</a
-                        >
-                      </li>
-                      <li>
-                        <a href="Small-Business.html" class="dropdown-item">
-                          Small Business</a
-                        >
-                      </li>
-                    </ul>
-                  </li>
-                  <li>
-                    <a href="Markets.html" class="dropdown-item">Markets</a>
-                  </li>
-                  <li><a href="Media.html" class="dropdown-item">Media</a></li>
-                  <li>
-                    <a href="finance.html" class="dropdown-item">Legal</a>
-                  </li>
-                  <li>
-                    <a href="Your-Money.html" class="dropdown-item"
-                      >Your Money</a
-                    >
-                  </li>
-                </ul>
-              </li>
-              <li class="nav-item dropdown-submenu dropdown">
+              <li
+                class="nav-item dropdown-submenu dropdown"
+                v-for="articleCategory in fewArticleCategories"
+                v-bind:key="articleCategory.id"
+              >
                 <a
                   class="dropdown-item dropdown-toggle nav-link"
                   href="#"
@@ -443,235 +352,96 @@
                   data-toggle="dropdown"
                   aria-haspopup="true"
                   aria-expanded="false"
+                  v-if="articleCategory.article_subcategories.length > 0"
                 >
-                  Economy
+                  {{ articleCategory.name }}
                 </a>
-                <ul class="dropdown-menu" aria-labelledby="navbarSubDropdown">
-                  <li>
-                    <a href="Aerospace-and-defence.html" class="dropdown-item"
-                      >Aerospace and Defense</a
-                    >
-                  </li>
-                  <li>
-                    <a href="Finance.html" class="dropdown-item">Finance</a>
-                  </li>
-                  <li><a href="Deals.html" class="dropdown-item">Deals</a></li>
-                  <li>
-                    <a href="Economy.html" class="dropdown-item">Economy</a>
-                  </li>
-                  <li>
-                    <a href="Energy.html" class="dropdown-item">Energy</a>
+                <a
+                  class="dropdown-item dropdown-toggle nav-link hidden-dropdown-toggle"
+                  href="#"
+                  id="navbarSubDropdown"
+                  role="button"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                  v-else
+                >
+                  {{ articleCategory.name }}
+                </a>
+                <ul
+                  class="dropdown-menu"
+                  aria-labelledby="navbarSubDropdown"
+                  v-if="articleCategory.article_subcategories.length > 0"
+                >
+                  <li
+                    v-for="articleSubcategory in articleCategory.article_subcategories"
+                    v-bind:key="articleSubcategory.id"
+                  >
+                    <a href="#" class="dropdown-item">
+                      {{ articleSubcategory.name }}
+                    </a>
                   </li>
                 </ul>
               </li>
-              <!-- Mega Menu -->
-              <li class="nav-item dropdown mega-menu">
+              <li
+                class="nav-item dropdown-submenu dropdown"
+                v-if="moreArticleCategories.length > 0"
+              >
                 <a
-                  class="nav-link dropdown-toggle"
-                  href="#"
-                  id="navbarDropdown"
+                  class="dropdown-item dropdown-toggle nav-link"
                   role="button"
                   data-toggle="dropdown"
                   aria-haspopup="true"
                   aria-expanded="false"
                 >
-                  Markets
+                  {{ $t("layoutMoreCategoriesLabel") }}
                 </a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <li>
-                    <div class="container">
-                      <div class="row">
-                        <div class="item col-12 col-md-2">
-                          <h6 class="megamenu-heading">Post Layout</h6>
-                          <ul class="list-unstyled megamenu-dropdown-list">
-                            <li>
-                              <a
-                                href="Aerospace-and-defence.html"
-                                class="dropdown-item"
-                                >Aerospace and Defense</a
-                              >
-                            </li>
-                            <li>
-                              <a href="Finance.html" class="dropdown-item"
-                                >Finance</a
-                              >
-                            </li>
-                            <li>
-                              <a href="Deals.html" class="dropdown-item"
-                                >Deals</a
-                              >
-                            </li>
-                            <li>
-                              <a href="Economy.html" class="dropdown-item label"
-                                >Economy</a
-                              >
-                            </li>
-                            <li>
-                              <a href="Energy.html" class="dropdown-item"
-                                >Energy</a
-                              >
-                            </li>
-                            <li>
-                              <a
-                                href="Entrepreneurship.html"
-                                class="dropdown-item"
-                                >Entrepreneurship</a
-                              >
-                            </li>
-                            <li>
-                              <a href="Markets.html" class="dropdown-item"
-                                >Markets</a
-                              >
-                            </li>
-                            <li>
-                              <a href="Media.html" class="dropdown-item"
-                                >Media</a
-                              >
-                            </li>
-                            <li>
-                              <a href="finance.html" class="dropdown-item"
-                                >Legal</a
-                              >
-                            </li>
-                            <li>
-                              <a href="Your-Money.html" class="dropdown-item"
-                                >Your Money</a
-                              >
-                            </li>
-                          </ul>
-                        </div>
-                        <div class="item col-12 col-md-2">
-                          <h6 class="megamenu-heading">Post Format</h6>
-                          <ul class="list-unstyled megamenu-dropdown-list">
-                            <li>
-                              <a
-                                href="Aerospace-and-defence.html"
-                                class="dropdown-item label"
-                                >Aerospace and Defense</a
-                              >
-                            </li>
-                            <li>
-                              <a href="Finance.html" class="dropdown-item"
-                                >Finance</a
-                              >
-                            </li>
-                            <li>
-                              <a href="Deals.html" class="dropdown-item"
-                                >Deals</a
-                              >
-                            </li>
-                            <li>
-                              <a href="Economy.html" class="dropdown-item"
-                                >Economy</a
-                              >
-                            </li>
-                            <li>
-                              <a href="Energy.html" class="dropdown-item"
-                                >Energy</a
-                              >
-                            </li>
-                            <li>
-                              <a
-                                href="Entrepreneurship.html"
-                                class="dropdown-item"
-                                >Entrepreneurship</a
-                              >
-                            </li>
-                            <li>
-                              <a href="Markets.html" class="dropdown-item"
-                                >Markets</a
-                              >
-                            </li>
-                            <li>
-                              <a href="Media.html" class="dropdown-item label"
-                                >Media</a
-                              >
-                            </li>
-                            <li>
-                              <a href="finance.html" class="dropdown-item"
-                                >Legal</a
-                              >
-                            </li>
-                            <li>
-                              <a href="Your-Money.html" class="dropdown-item"
-                                >Your Money</a
-                              >
-                            </li>
-                          </ul>
-                        </div>
-                        <div class="item col-12 col-md-2">
-                          <h6 class="megamenu-heading">Category Layout</h6>
-                          <ul class="list-unstyled megamenu-dropdown-list">
-                            <li>
-                              <a
-                                href="Aerospace-and-defence.html"
-                                class="dropdown-item"
-                                >Aerospace and Defense</a
-                              >
-                            </li>
-                            <li>
-                              <a href="Finance.html" class="dropdown-item"
-                                >Finance</a
-                              >
-                            </li>
-                            <li>
-                              <a href="Deals.html" class="dropdown-item label"
-                                >Deals</a
-                              >
-                            </li>
-                            <li>
-                              <a href="Economy.html" class="dropdown-item"
-                                >Economy</a
-                              >
-                            </li>
-                            <li>
-                              <a href="Energy.html" class="dropdown-item"
-                                >Energy</a
-                              >
-                            </li>
-                            <li>
-                              <a
-                                href="Entrepreneurship.html"
-                                class="dropdown-item"
-                                >Entrepreneurship</a
-                              >
-                            </li>
-                            <li>
-                              <a href="Markets.html" class="dropdown-item"
-                                >Markets</a
-                              >
-                            </li>
-                            <li>
-                              <a href="Media.html" class="dropdown-item"
-                                >Media</a
-                              >
-                            </li>
-                            <li>
-                              <a href="finance.html" class="dropdown-item"
-                                >Legal</a
-                              >
-                            </li>
-                            <li>
-                              <a href="Your-Money.html" class="dropdown-item"
-                                >Your Money</a
-                              >
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
+                <ul class="dropdown-menu">
+                  <li
+                    class="dropdown-submenu dropdown"
+                    v-for="articleCategory in moreArticleCategories"
+                    v-bind:key="articleCategory.id"
+                  >
+                    <a
+                      class="dropdown-item dropdown-toggle"
+                      href="#"
+                      id="navbarSubDropdown"
+                      role="button"
+                      data-toggle="dropdown"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                      v-if="articleCategory.article_subcategories.length > 0"
+                    >
+                      {{ articleCategory.name }}
+                    </a>
+                    <a
+                      class="dropdown-item dropdown-toggle hidden-dropdown-toggle"
+                      href="#"
+                      id="navbarSubDropdown"
+                      role="button"
+                      data-toggle="dropdown"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                      v-else
+                    >
+                      {{ articleCategory.name }}
+                    </a>
+                    <ul
+                      class="dropdown-menu"
+                      aria-labelledby="navbarSubDropdown"
+                      v-if="articleCategory.article_subcategories.length > 0"
+                    >
+                      <li
+                        v-for="articleSubcategory in articleCategory.article_subcategories"
+                        v-bind:key="articleSubcategory.id"
+                      >
+                        <a href="#" class="dropdown-item">
+                          {{ articleSubcategory.name }}</a
+                        >
+                      </li>
+                    </ul>
                   </li>
                 </ul>
-              </li>
-              <!-- /.Mega Menu -->
-              <li class="nav-item">
-                <a href="life-and-arts.html" class="nav-link">Life and Arts</a>
-              </li>
-              <li class="nav-item">
-                <a href="Sport.html" class="nav-link">Sport</a>
-              </li>
-              <li class="nav-item">
-                <a href="Technology.html" class="nav-link">Technology</a>
               </li>
             </ul>
           </div>
@@ -709,12 +479,10 @@
                 ><img src="../assets/images/footer_logo.png" alt="Zola"
               /></a>
             </div>
-            <p>
-              Phasellus pulvinar iaculis nunc at placerat. Sed porta
-              sollicitudin eros, vel sagittis turpis consequat nec. Donec ac
-              viverra ligula, in scelerisque leo. Proin massa quam, ornare in
-              porta quis
+            <p style="text-align: justify">
+              {{ $t("phrasePulitzer") }}
             </p>
+            <p style="text-align: right">- Joseph Pulitzer</p>
             <ul class="ft_social_links">
               <li>
                 <a href="#"><i class="fa fa-facebook fa-lg"></i></a>
@@ -728,7 +496,7 @@
             </ul>
           </div>
           <div class="ft-column col-md-12 col-lg-4">
-            <h3>Instagram Photo</h3>
+            <h3>{{ $t("instagramPhoto") }}</h3>
             <div class="instagram-01">
               <ul>
                 <li>
@@ -781,13 +549,13 @@
                 </li>
               </ul>
               <a href="#" class="view-more"
-                >View More
+                >{{ $t("viewMore") }}
                 <i class="fa fa-angle-double-right" aria-hidden="true"></i
               ></a>
             </div>
           </div>
           <div class="ft-column col-md-12 col-lg-4">
-            <h3>Recent News</h3>
+            <h3>{{ $t("recentNews") }}</h3>
             <div class="recentnews-02">
               <!-- Item -->
               <div class="item">
@@ -851,13 +619,13 @@
             <div class="col-12">
               <div class="copyright-wrapper">
                 <p>
-                  Copyright © 2019 Zola, Designed by
+                  {{ $t("footerCopyright") }}
                   <a
                     target="_blank"
-                    href="https://themeforest.net/user/textheme/portfolio"
-                    >TexTheme</a
+                    href="https://www.upwork.com/freelancers/~01f0589d0e5323286f"
+                    >Henry Jaimes</a
                   >
-                  All Rights Reserved.
+                  {{ $t("footerAllRightsReserved") }}
                 </p>
               </div>
             </div>
@@ -873,31 +641,88 @@
 import "../assets/images/favicon.png";
 import "../assets/css/bootstrap.min.css";
 import "../assets/css/swiper.min.css";
-import "../assets/fonts/fontawesome/font-awesome.min.css";
 import "../assets/css/owl.theme.default.min.css";
 import "../assets/css/animate.min.css";
 import "../assets/css/nprogress.css";
 import "../assets/css/style.css";
+import "../assets/css/owl.carousel.min.css";
+import "../assets/fonts/fontawesome/font-awesome.min.css";
 import "../assets/js/jquery.min.js";
 import "../assets/js/swiper.min.js";
 import "../assets/js/nprogress.js";
-import "../assets/css/owl.carousel.min.css";
-
-// import "../assets/js/bootstrap.min.js";
-// import "../assets/js/owl.carousel.min.js";
-// import "../assets/js/jquery.waypoints.min.js";
-// import "../assets/js/easy-waypoint-animate.js";
-// import "../assets/js/jquery.countup.js";
-// import "../assets/js/jquery.newsTicker.min.js";
-// import "../assets/js/scripts.js";
+import "../assets/js/easy-waypoint-animate.js";
+import "../assets/js/jquery.countup.js";
+import "../assets/js/jquery.newsTicker.min.js";
+import "../assets/js/scripts.js";
+import LanguageSwitcher from "../components/layouts/LanguageSwitcher";
+import gql from "graphql-tag";
 
 export default {
   name: "MainLayout",
+  components: {
+    LanguageSwitcher,
+  },
+  data() {
+    return {
+      articleCategories: [],
+      dateToday: null,
+    };
+  },
+  apollo: {
+    articleCategories: gql`
+      query articleCategories {
+        articleCategories {
+          id
+          name
+          language
+          article_subcategories {
+            id
+            name
+            language
+          }
+        }
+      }
+    `,
+  },
+  methods: {
+    getDate: function () {
+      var formattedDate = new Date().toJSON().slice(0, 10).replace(/-/g, "-");
+      this.dateToday = formattedDate;
+    },
+  },
+  computed: {
+    fewArticleCategories: function () {
+      var articleCategories = this.articleCategories.filter(
+        (category) => category.language === this.$t("language")
+      );
+
+      return articleCategories.slice(0, 5);
+    },
+    moreArticleCategories: function () {
+      var articleCategories = this.articleCategories.filter(
+        (category) => category.language === this.$t("language")
+      );
+
+      return articleCategories.slice(5);
+    },
+  },
+  mounted() {
+    this.getDate();
+  },
 };
 </script>
 
 <style>
-.q-page-container{
+.q-page-container {
   background-color: #f2f2f8;
+}
+.language-switcher {
+  height: 100%;
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+.hidden-dropdown-toggle::after {
+  display: none !important;
 }
 </style>

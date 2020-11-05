@@ -1,3 +1,6 @@
+import jQuery from 'jquery';
+import NProgress from './nprogress';
+
 (function($){
 
 	'use strict';

@@ -6,6 +6,8 @@
 *
 * Date: Oct 27, 2016
 */
+import jQuery from 'jquery';
+
 (function( $ ){
   "use strict";
 
