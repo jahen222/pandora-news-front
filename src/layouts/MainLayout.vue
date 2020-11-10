@@ -7,7 +7,7 @@
           <div class="row">
             <div class="left col-6">
               <div class="today">
-                <p>{{ dateToday }}</p>
+                <p>{{ getFormatDate(now) }}</p>
               </div>
               <div class="searchbar">
                 <form action="#" method="post">
@@ -333,7 +333,7 @@
       <nav class="navbar-menu navbar navbar-expand-lg">
         <div class="container navbar-container">
           <!-- Logo -->
-          <a class="navbar-brand background-logo" href="index.html"
+          <a class="navbar-brand background-logo" href="/"
             ><img src="../assets/images/logo-01.png" alt="Zola"
           /></a>
           <!-- /.Logo -->
@@ -665,7 +665,7 @@ export default {
   data() {
     return {
       articleCategories: [],
-      dateToday: null,
+      now: Date.now(),
     };
   },
   apollo: {
@@ -685,9 +685,22 @@ export default {
     `,
   },
   methods: {
-    getDate: function () {
-      var formattedDate = new Date().toJSON().slice(0, 10).replace(/-/g, "-");
-      this.dateToday = formattedDate;
+    getFormatDate: function (datetime) {
+      var dateTime = new Date(datetime);
+      const formattedDate =
+        dateTime.getUTCMonth() +
+        "/" +
+        dateTime.getUTCDate() +
+        "/" +
+        dateTime.getUTCFullYear() +
+        " " +
+        dateTime.getHours() +
+        ":" +
+        dateTime.getMinutes() +
+        ":" +
+        dateTime.getSeconds();
+
+      return formattedDate;
     },
   },
   computed: {
@@ -706,8 +719,11 @@ export default {
       return articleCategories.slice(5);
     },
   },
-  mounted() {
-    this.getDate();
+  created() {
+    var self = this;
+    setInterval(function () {
+      self.now = Date.now();
+    }, 1000);
   },
 };
 </script>

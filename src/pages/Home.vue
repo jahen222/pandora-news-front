@@ -95,7 +95,7 @@
           <div class="col-12 col-lg-5">
             <NewsSection03 v-bind:articles="articles ? articles : []" />
             <div class="load-more-btn">
-              <a @click="moreArticles()" class="btn">Load More</a>
+              <a @click="moreArticles()" class="btn">{{ $t('loadMore') }}</a>
             </div>
             <div class="ts-space30"></div>
           </div>
@@ -149,7 +149,7 @@ export default {
     return {
       articles: [],
       start: 0,
-      limit: 20,
+      limit: 5,
     };
   },
   apollo: {
@@ -159,7 +159,9 @@ export default {
           articles(limit: $limit, start: $start, sort: "published_at:DESC") {
             id
             title
+            content
             language
+            published_at
             media {
               url
             }
@@ -170,6 +172,13 @@ export default {
                 id
                 name
               }
+            }
+            article_tags {
+              id
+              name
+            }
+            admin_user {
+              username
             }
           }
         }
@@ -184,8 +193,8 @@ export default {
   },
   methods: {
     moreArticles: function () {
-      console.log("hola mundo: ", this.articles[0].media[0].url);
-    }
-  }
+      this.limit = this.limit + 5;
+    },
+  },
 };
 </script>

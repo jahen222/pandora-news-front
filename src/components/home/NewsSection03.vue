@@ -2,19 +2,19 @@
   <div v-if="articles.length > 0">
     <div
       class="block-style-9"
-      v-for="article in articlesByLenguage"
+      v-for="article in articlesByLanguage"
       v-bind:key="article.id"
     >
       <!-- Contents -->
       <div class="contents">
         <!-- Thumbnail -->
         <div class="thumbnail-1">
-          <a href="#">
-            <img :src="process.env.VUE_APP_STRAPI_API_URL + article.media[0].url" alt="Zola" />
+          <router-link :to="{ name: 'article' , params: { id: article.id }}">
+            <img :src="api_url + article.media[0].url" alt="Zola" />
             <div class="overlay">
               <div class="overlay-content">
                 <div class="list-users-02">
-                  <ul class="images">
+                  <ul class="images" style="display: none">
                     <li>
                       <img
                         src="../../assets/images/profile_15.jpg"
@@ -22,40 +22,46 @@
                       />
                     </li>
                   </ul>
-                  <p><span>Lily Lover</span></p>
+                  <p>
+                    {{ $t("by") }}:
+                    <span>{{ article.admin_user.username }}</span>
+                  </p>
                 </div>
               </div>
             </div>
-          </a>
+          </router-link>
         </div>
         <!-- /.Thumbnail -->
         <!-- Content Wrapper -->
         <div class="content-wrapper">
           <!-- Date -->
           <div class="date">
-            <h5>2 MIN AGO</h5>
+            <h5>{{ getFormatDate(article.published_at) }}</h5>
           </div>
           <!-- /.Date -->
           <!-- Title -->
           <div class="title">
-            <a href="#">
-              <h2><span>NEW</span>{{ article.title }}</h2>
-            </a>
+            <router-link :to="{ name: 'article' , params: { id: article.id }}">
+              <h2>
+                <span v-if="getNewArticle(article.published_at) == true"
+                  >NEW</span
+                >{{ article.title }}
+              </h2>
+            </router-link>
           </div>
           <!-- /.Title -->
           <!-- Description -->
           <div class="desc">
             <p>
-              Vivamus dapibus et purus quis mollis. Mauris tempus tortor vel mi
-              eleifend laoreet. Nulla laoreet sapien erat, nec vestibulum est
-              volutpat <a href="#">Read More</a>
+              {{ article.content.slice(0, 160) }}...
+              <router-link :to="{ name: 'article' , params: { id: article.id }}">{{ $t("readMore") }}</router-link>
             </p>
           </div>
           <!-- /.Description -->
         </div>
         <!-- Content Wrapper -->
         <!-- Share Post -->
-        <div class="share-post">
+        <div class="share-post" style="display: none">
           <div class="like">
             <a href="#">
               <svg
@@ -134,11 +140,40 @@ export default {
   props: ["articles"],
   data() {
     return {
-      // api_url: process.env.VUE_APP_STRAPI_API_URL,
+      api_url: process.env.API,
     };
   },
+  methods: {
+    getFormatDate: function (datetime) {
+      var dateTime = new Date(datetime);
+      const formattedDate =
+        dateTime.getUTCMonth() +
+        "/" +
+        dateTime.getUTCDate() +
+        "/" +
+        dateTime.getUTCFullYear() +
+        " " +
+        dateTime.getHours() +
+        ":" +
+        dateTime.getMinutes();
+      // ":" +
+      // dateTime.getSeconds()
+
+      return formattedDate;
+    },
+    getNewArticle: function (datetime) {
+      const articledate = new Date(datetime);
+      const todaydate = new Date();
+      const diff = todaydate.getTime() - articledate.getTime();
+      if (Math.round(diff / (1000 * 60 * 60 * 24)) < 1) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+  },
   computed: {
-    articlesByLenguage: function () {
+    articlesByLanguage: function () {
       var articles = this.articles.filter(
         (article) => article.language === this.$t("language")
       );

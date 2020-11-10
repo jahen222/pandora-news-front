@@ -8,7 +8,7 @@ import { ApolloLink } from "apollo-link";
 const cache = new InMemoryCache();
 
 const httpLink = createHttpLink({
-  uri: process.env.VUE_APP_GRAPHQL_URL || "http://localhost:1337/graphql"
+  uri: process.env.GRAPHQL || "http://localhost:1337/graphql"
 });
 
 const authLink = new ApolloLink((operation, forward) => {

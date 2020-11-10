@@ -4,6 +4,7 @@
 export default {
   // Config
   language: 'spanish',
+  acronym: 'es-es',
   failed: 'Accion fallida',
   success: 'La acción fue exitosa',
   // Header
@@ -18,4 +19,8 @@ export default {
   // General
   recentNews: "Noticias Recientes",
   viewMore: "Ver Más",
+  by: "Por",
+  readMore: "Leer Más",
+  loadMore: "Cargar Más",
+  relatedPosts: "Artículos Relacionados"
 }

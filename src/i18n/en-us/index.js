@@ -4,6 +4,7 @@
 export default {
   // Config
   language: 'english',
+  acronym: 'en-us',
   failed: 'Action failed',
   success: 'Action was successful',
   // Header
@@ -18,4 +19,8 @@ export default {
   // General
   recentNews: "Recent News",
   viewMore: "View More",
+  by: "By",
+  readMore: "Read More",
+  loadMore: "Load More",
+  relatedPosts: "Related Articles"
 }

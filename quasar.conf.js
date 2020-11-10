@@ -7,7 +7,7 @@
 // https://quasar.dev/quasar-cli/quasar-conf-js
 /* eslint-env node */
 
-module.exports = function (/* ctx */) {
+module.exports = function (ctx) {
   return {
     // https://quasar.dev/quasar-cli/supporting-ts
     supportTS: false,
@@ -62,6 +62,20 @@ module.exports = function (/* ctx */) {
       // analyze: true,
 
       // Options below are automatically set depending on the env, set them if you want to override
+      env: {
+        API: ctx.dev
+          ? 'http://localhost:1337'
+          : 'http://localhost:1337',
+        GRAPHQL: ctx.dev
+          ? 'http://localhost:1337/graphql'
+          : 'http://localhost:1337/graphql',
+        VUE_ROUTER_MODE: ctx.dev
+          ? 'history'
+          : 'history',
+        VUE_ROUTER_BASE: ctx.dev
+          ? '/'
+          : '/',
+      },
       // extractCSS: false,
 
       // https://quasar.dev/quasar-cli/handling-webpack
