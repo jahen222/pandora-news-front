@@ -334,7 +334,10 @@
         <div class="container navbar-container">
           <!-- Logo -->
           <a class="navbar-brand background-logo" href="/"
-            ><img src="../assets/images/logo-01.png" alt="Zola"
+            ><img
+              src="../assets/pandora_news_logo.png"
+              width="140px"
+              alt="Zola"
           /></a>
           <!-- /.Logo -->
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -639,21 +642,23 @@
 
 <script>
 import "../assets/images/favicon.png";
-import "../assets/css/bootstrap.min.css";
 import "../assets/css/swiper.min.css";
 import "../assets/css/owl.theme.default.min.css";
 import "../assets/css/animate.min.css";
 import "../assets/css/nprogress.css";
 import "../assets/css/style.css";
-import "../assets/css/owl.carousel.min.css";
 import "../assets/fonts/fontawesome/font-awesome.min.css";
-import "../assets/js/jquery.min.js";
 import "../assets/js/swiper.min.js";
 import "../assets/js/nprogress.js";
 import "../assets/js/easy-waypoint-animate.js";
-import "../assets/js/jquery.countup.js";
-import "../assets/js/jquery.newsTicker.min.js";
 import "../assets/js/scripts.js";
+// import "../assets/css/bootstrap.min.css";
+// import "../assets/css/owl.carousel.min.css";
+// import "../assets/js/jquery.countup.js";
+// import "../assets/js/jquery.newsTicker.min.js";
+// import "../assets/js/jquery.min.js";
+// import "../assets/js/popper.js";
+// import "../assets/js/bootstrap.min.js";
 import LanguageSwitcher from "../components/layouts/LanguageSwitcher";
 import gql from "graphql-tag";
 
@@ -669,20 +674,32 @@ export default {
     };
   },
   apollo: {
-    articleCategories: gql`
-      query articleCategories {
-        articleCategories {
-          id
-          name
-          language
-          article_subcategories {
+    articleCategories: {
+      query: gql`
+        query articleCategories($acronym: String!) {
+          articleCategories(
+            where: { language: { acronym_contains: $acronym } }
+          ) {
             id
             name
-            language
+            article_subcategories {
+              id
+              name
+            }
+            language {
+              id
+              name
+              acronym
+            }
           }
         }
-      }
-    `,
+      `,
+      variables() {
+        return {
+          acronym: this.$i18n.locale,
+        };
+      },
+    },
   },
   methods: {
     getFormatDate: function (datetime) {
@@ -705,16 +722,12 @@ export default {
   },
   computed: {
     fewArticleCategories: function () {
-      var articleCategories = this.articleCategories.filter(
-        (category) => category.language === this.$t("language")
-      );
+      var articleCategories = this.articleCategories;
 
       return articleCategories.slice(0, 5);
     },
     moreArticleCategories: function () {
-      var articleCategories = this.articleCategories.filter(
-        (category) => category.language === this.$t("language")
-      );
+      var articleCategories = this.articleCategories;
 
       return articleCategories.slice(5);
     },

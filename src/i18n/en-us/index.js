@@ -22,5 +22,7 @@ export default {
   by: "By",
   readMore: "Read More",
   loadMore: "Load More",
-  relatedPosts: "Related Articles"
+  relatedPosts: "Related Articles",
+  noArticles: "No Articles",
+  editorsPicks: "EDITOR'S PICKS",
 }

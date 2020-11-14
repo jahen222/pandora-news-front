@@ -2,14 +2,19 @@
   <div v-if="articles.length > 0">
     <div
       class="block-style-9"
-      v-for="article in articlesByLanguage"
+      v-for="article in articles"
       v-bind:key="article.id"
     >
       <!-- Contents -->
       <div class="contents">
         <!-- Thumbnail -->
         <div class="thumbnail-1">
-          <router-link :to="{ name: 'article' , params: { id: article.id }}">
+          <router-link
+            :to="{
+              name: 'article',
+              params: { id: article.id },
+            }"
+          >
             <img :src="api_url + article.media[0].url" alt="Zola" />
             <div class="overlay">
               <div class="overlay-content">
@@ -41,10 +46,14 @@
           <!-- /.Date -->
           <!-- Title -->
           <div class="title">
-            <router-link :to="{ name: 'article' , params: { id: article.id }}">
+            <router-link
+              :to="{
+                name: 'article',
+                params: { id: article.id },
+              }"
+            >
               <h2>
-                <span v-if="getNewArticle(article.published_at) == true"
-                  >NEW</span
+                <span v-if="getLabelNew(article.published_at) == true">NEW</span
                 >{{ article.title }}
               </h2>
             </router-link>
@@ -54,7 +63,13 @@
           <div class="desc">
             <p>
               {{ article.content.slice(0, 160) }}...
-              <router-link :to="{ name: 'article' , params: { id: article.id }}">{{ $t("readMore") }}</router-link>
+              <router-link
+                :to="{
+                  name: 'article',
+                  params: { id: article.id },
+                }"
+                >{{ $t("readMore") }}</router-link
+              >
             </p>
           </div>
           <!-- /.Description -->
@@ -132,6 +147,25 @@
       <!-- /.Contents -->
     </div>
   </div>
+  <div v-else>
+    <div class="block-style-9">
+      <!-- Contents -->
+      <div class="contents">
+        <!-- Content Wrapper -->
+        <div class="content-wrapper">
+          <!-- Title -->
+          <div class="title">
+            <h2>
+              {{ $t("noArticles") }}
+            </h2>
+          </div>
+          <!-- /.Title -->
+        </div>
+        <!-- Content Wrapper -->
+      </div>
+      <!-- /.Contents -->
+    </div>
+  </div>
 </template>
 
 <script>
@@ -161,10 +195,10 @@ export default {
 
       return formattedDate;
     },
-    getNewArticle: function (datetime) {
-      const articledate = new Date(datetime);
-      const todaydate = new Date();
-      const diff = todaydate.getTime() - articledate.getTime();
+    getLabelNew: function (datetime) {
+      const articleDate = new Date(datetime);
+      const todayDate = new Date();
+      const diff = todayDate.getTime() - articleDate.getTime();
       if (Math.round(diff / (1000 * 60 * 60 * 24)) < 1) {
         return true;
       } else {
@@ -172,7 +206,7 @@ export default {
       }
     },
   },
-  computed: {
+  /* computed: {
     articlesByLanguage: function () {
       var articles = this.articles.filter(
         (article) => article.language === this.$t("language")
@@ -180,6 +214,6 @@ export default {
 
       return articles;
     },
-  },
+  }, */
 };
 </script>

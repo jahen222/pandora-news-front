@@ -95,7 +95,7 @@
                 </div>
                 <!-- /.Block Style 16 -->
                 <!-- Block Style 17 -->
-                <div class="block-style-17">
+                <div class="block-style-17" v-if="article.media.length === 1">
                   <span class="bg-orange">{{
                     article.article_subcategory.name
                   }}</span>
@@ -105,6 +105,10 @@
                     alt="Zola"
                   />
                 </div>
+                <Slider
+                  v-bind:medias="article.media ? article.media : []"
+                  v-else
+                />
                 <!-- /.Block Style 17 -->
                 <!-- Block Style 18 -->
                 <div class="block-style-18">
@@ -204,6 +208,7 @@
               </div>
 
               <div class="ts-space25"></div>
+              <FacebookComments />
             </div>
           </div>
           <!-- Block Style 3, 4, 5 -->
@@ -403,12 +408,18 @@
 <script>
 import gql from "graphql-tag";
 import marked from "marked";
+import FacebookComments from "../components/article/FacebookComments";
+import Slider from "../components/article/Slider";
 
 export default {
-  name: "ArticleDetail",
+  name: "Article",
+  components: {
+    FacebookComments,
+    Slider
+  },
   data() {
     return {
-      article_id: this.$route.params.id,
+      articleId: this.$route.params.id,
       article: null,
       api_url: process.env.API,
       tagArticleslimit: 3,
@@ -423,7 +434,6 @@ export default {
             id
             title
             content
-            language
             published_at
             media {
               url
@@ -461,7 +471,7 @@ export default {
       `,
       variables() {
         return {
-          article_id: this.article_id,
+          article_id: this.articleId,
           tagArticleLimit: this.tagArticleslimit,
         };
       },
@@ -508,7 +518,7 @@ export default {
         const articles = tagArticles[index].articles;
         for (let index2 = 0; index2 < articles.length; index2++) {
           const article = articles[index2];
-          if (article.id !== this.article_id) {
+          if (article.id !== this.articleId) {
             tagsArticles.push(article);
           }
         }
@@ -518,17 +528,13 @@ export default {
     },
     formatContent: function () {
       return marked(
-        this.article.content.replace(
-          /\/uploads\//g,
-          this.api_url + "/uploads/"
+        this.article.content.replace(/\/uploads\//g, this.api_url + "/uploads/")
+      )
+        .replace(
+          /<img/g,
+          '<img style="margin-left: auto;margin-right: auto; display: block; width: 100%;"'
         )
-      ).replace(
-        /<img/g,
-        '<img style="margin-left: auto;margin-right: auto; display: block; width: 100%;"'
-      ).replace(
-        /\/p>/g,
-        '/p><br />'
-      );
+        .replace(/\/p>/g, "/p><br />");
     },
   },
   beforeUpdate() {

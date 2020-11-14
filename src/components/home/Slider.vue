@@ -1,16 +1,25 @@
 <template>
-  <div id="section-slider" class="slider01">
+  <div id="section-slider" class="slider01" v-if="lastArticle != null">
     <!-- Slider Content -->
     <div class="slider-content">
       <div class="container">
         <div class="row">
           <!-- Left -->
           <div class="left">
-            <h4>ADVENTURE</h4>
-            <h1>
-              Almost on top of the Everest, a picture is worth a thousand words
-            </h1>
-            <div class="list-users-01">
+            <h4>
+              {{ lastArticle.article_subcategory.article_category.name }}
+            </h4>
+            <router-link
+              :to="{
+                name: 'article',
+                params: { id: lastArticle.id },
+              }"
+            >
+              <h1>
+                {{ lastArticle.title }}
+              </h1>
+            </router-link>
+            <div class="list-users-01" style="display: none">
               <ul class="images">
                 <li>
                   <img src="../../assets/images/list_user1.jpg" alt="Zola" />
@@ -69,7 +78,7 @@
           </div>
           <!-- /.Left -->
           <!-- Right -->
-          <div class="right">
+          <div class="right" style="display: none">
             <!-- Item -->
             <div class="item">
               <div class="header">
@@ -153,6 +162,34 @@
     <!-- /.Slider Content -->
     <!-- Slider Image -->
     <div class="slider-image">
+      <img
+        class="img-fluid"
+        :src="api_url + lastArticle.media[0].url"
+        alt="Zola"
+      />
+    </div>
+    <!-- /.Slider Image -->
+  </div>
+
+  <div id="section-slider" class="slider01" v-else>
+    <!-- Slider Content -->
+    <div class="slider-content">
+      <div class="container">
+        <div class="row">
+          <!-- Left -->
+          <div class="left">
+            <h4>{{ $t("noArticles") }}</h4>
+            <h1>
+              {{ $t("noArticles") }}
+            </h1>
+          </div>
+          <!-- /.Left -->
+        </div>
+      </div>
+    </div>
+    <!-- /.Slider Content -->
+    <!-- Slider Image -->
+    <div class="slider-image">
       <img class="img-fluid" src="../../assets/images/slider1.jpg" alt="Zola" />
     </div>
     <!-- /.Slider Image -->
@@ -162,5 +199,26 @@
 <script>
 export default {
   name: "Slider",
+  props: ["lastArticle"],
+  data() {
+    return {
+      api_url: process.env.API,
+    };
+  },
 };
 </script>
+
+<style scoped>
+.left {
+  padding-left: 10% !important;
+}
+.slider01:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+</style>

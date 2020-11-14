@@ -1,26 +1,34 @@
 <template>
-  <div class="block-style-8">
+  <div class="block-style-8" v-if="subcategoryWithArticle02 != null">
     <!-- Block Title 2 -->
     <div class="block-title-2">
-      <h3>LIFE</h3>
+      <h3>{{ subcategoryWithArticle02.article_category.name }}</h3>
     </div>
     <!-- /.Block Title 2 -->
     <!-- Contents -->
     <div class="contents">
       <!-- Thumbnail -->
       <div class="thumbnail-1">
-        <span class="bg-grey">Travel</span>
+        <span class="bg-red">{{ subcategoryWithArticle02.name }}</span>
         <a href="#">
-          <img src="../../assets/images/thumbnail_08.jpg" alt="Zola" />
+          <img
+            :src="api_url + subcategoryWithArticle02.articles[0].media[0].url"
+            alt="Zola"
+          />
           <div class="overlay">
             <div class="overlay-content">
               <div class="list-users-02">
-                <ul class="images">
+                <ul class="images" style="display: none">
                   <li>
                     <img src="../../assets/images/profile_11.jpg" alt="Zola" />
                   </li>
                 </ul>
-                <p><span>Olby Oltraford</span></p>
+                <p>
+                  {{ $t("by") }}:
+                  <span>{{
+                    subcategoryWithArticle02.articles[0].admin_user.username
+                  }}</span>
+                </p>
               </div>
             </div>
           </div>
@@ -31,28 +39,43 @@
       <div class="content-wrapper">
         <!-- Date -->
         <div class="date">
-          <h5>5 MIN READ</h5>
+          <h5>
+            {{
+              getFormatDate(subcategoryWithArticle02.articles[0].published_at)
+            }}
+          </h5>
         </div>
         <!-- /.Date -->
         <!-- Title -->
         <div class="title">
-          <a href="#">
-            <h2>Trends is Now Business from Ho- me through a Smart Phone</h2>
-          </a>
+          <router-link
+            :to="{
+              name: 'article',
+              params: { id: subcategoryWithArticle02.articles[0].id },
+            }"
+          >
+            <h2>{{ subcategoryWithArticle02.articles[0].title }}</h2>
+          </router-link>
         </div>
         <!-- /.Title -->
         <!-- Description -->
         <div class="desc">
           <p>
-            Etiam eget erat accumsan, tempus purus a, sagittis nisi. Praesent
-            laoreet interdum diam, ac ornare dolor mattis up.
+            {{ subcategoryWithArticle02.articles[0].content.slice(0, 550) }}...
+              <router-link
+                :to="{
+                  name: 'article',
+                  params: { id: subcategoryWithArticle02.articles[0].id },
+                }"
+                >{{ $t("readMore") }}</router-link
+              >
           </p>
         </div>
         <!-- /.Description -->
       </div>
       <!-- Content Wrapper -->
       <!-- Small List Posts -->
-      <div class="small-list-posts">
+      <div class="small-list-posts" style="display: none">
         <!-- Item -->
         <div class="item">
           <a href="#">
@@ -97,10 +120,51 @@
     </div>
     <!-- /.Contents -->
   </div>
+  <div class="block-style-8" v-else>
+    <!-- Contents -->
+    <div class="contents">
+      <!-- Thumbnail -->
+      <!-- Content Wrapper -->
+      <div class="content-wrapper">
+        <!-- Title -->
+        <div class="title">
+            <h2>{{ $t("noArticles") }}</h2>
+        </div>
+        <!-- /.Title -->
+      </div>
+      <!-- Content Wrapper -->
+    </div>
+    <!-- /.Contents -->
+  </div>
 </template>
 
 <script>
 export default {
   name: "NewsSection02",
+  props: ["subcategoryWithArticle02"],
+  data() {
+    return {
+      api_url: process.env.API,
+    };
+  },
+  methods: {
+    getFormatDate: function (datetime) {
+      var dateTime = new Date(datetime);
+      const formattedDate =
+        dateTime.getUTCMonth() +
+        "/" +
+        dateTime.getUTCDate() +
+        "/" +
+        dateTime.getUTCFullYear() +
+        " " +
+        dateTime.getHours() +
+        ":" +
+        dateTime.getMinutes();
+      // ":" +
+      // dateTime.getSeconds()
+
+      return formattedDate;
+    },
+  },
 };
 </script>

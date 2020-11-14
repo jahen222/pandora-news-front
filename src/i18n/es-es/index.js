@@ -22,5 +22,7 @@ export default {
   by: "Por",
   readMore: "Leer Más",
   loadMore: "Cargar Más",
-  relatedPosts: "Artículos Relacionados"
+  relatedPosts: "Artículos Relacionados",
+  noArticles: "No hay Artículos",
+  editorsPicks: "DESTACADOS",
 }
