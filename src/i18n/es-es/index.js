@@ -25,4 +25,16 @@ export default {
   relatedPosts: "Artículos Relacionados",
   noArticles: "No hay Artículos",
   editorsPicks: "DESTACADOS",
+  newsByTags: "NOTICIAS POR ETIQUETAS",
+  pinned: "FIJADO",
+  stayConnected: "MANTENTE CONECTADO",
+  likePage: "ME GUSTA",
+  fans: "ME GUSTA",
+  follow: "SEGUIR",
+  followers: "FOLLOWERS",
+  ourSponsors: "PATROCINADORES",
+  current: "ACTUALIDAD",
+  authors: "AUTORES",
+  noAuthors: "No hay Autores"
+
 }

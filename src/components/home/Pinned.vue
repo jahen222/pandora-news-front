@@ -1,13 +1,13 @@
 <template>
-  <div v-if="articles.length > 0">
+  <div v-if="articlesPinned.length > 0">
     <!-- Block Title 2 -->
     <div class="block-title-2">
-      <h3>{{ $t("current") }}</h3>
+      <h3>{{ $t("pinned") }}</h3>
     </div>
     <!-- /.Block Title 2 -->
     <div
       class="block-style-2"
-      v-for="article in articles"
+      v-for="article in articlesPinned"
       v-bind:key="article.id"
     >
       <!-- Contents -->
@@ -132,7 +132,7 @@
     <div class="block-style-2">
       <!-- Block Title 2 -->
       <div class="block-title-2">
-        <h3>{{ $t("current") }}</h3>
+        <h3>{{ $t("pinned") }}</h3>
       </div>
       <!-- /.Block Title 2 -->
       <!-- Contents -->
@@ -157,8 +157,8 @@
 // import Media from "@dongido/vue-viaudio";
 
 export default {
-  name: "NewsSection01",
-  props: ["articles"],
+  name: "Pinned",
+  props: ["articlesPinned"],
   components: {
     // Media
   },

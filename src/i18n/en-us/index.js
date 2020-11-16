@@ -25,4 +25,15 @@ export default {
   relatedPosts: "Related Articles",
   noArticles: "No Articles",
   editorsPicks: "EDITOR'S PICKS",
+  newsByTags: "NEWS BY TAGS",
+  pinned: "PINNED",
+  stayConnected: "STAY CONNECTED",
+  likePage: "LIKE PAGE",
+  fans: "LIKES",
+  follow: "FOLLOW",
+  followers: "FOLLOWERS",
+  ourSponsors: "OUR SPONSORS",
+  current: "CURRENT",
+  authors: "AUTHORS",
+  noAuthors: "No Authors"
 }

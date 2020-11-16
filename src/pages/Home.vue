@@ -1,7 +1,7 @@
 <template>
   <q-page class="flex flex-center">
     <!-- Section Slider 01 -->
-    <Slider v-bind:lastArticle="lastArticle ? lastArticle : null" />
+    <Slider v-bind:lastArticle="articles[0] ? articles[0] : null" />
     <!-- /.Section Slider 01 -->
     <!-- Section Contents -->
     <div id="section-contents" class="homepage-01">
@@ -9,12 +9,19 @@
         <div class="row">
           <!-- Block Style 1 -->
           <div class="col-12 col-lg-3">
-            <MostRead />
+            <EditorPicks
+              v-bind:editorsPicks="editorsPicks ? editorsPicks : []"
+            />
           </div>
           <!-- /.Block Style 1 -->
           <!-- Block Style 2 -->
           <div class="col-12 col-lg-5">
-            <TopComments />
+            <Pinned
+              v-bind:articlesPinned="articlesPinned ? articlesPinned : []"
+            />
+            <NewsSection01
+              v-bind:articles="articles ? articles.slice(0, 3) : []"
+            />
           </div>
           <!-- /.Block Style 2 -->
           <!-- Block Style 3, 4, 5 -->
@@ -30,6 +37,10 @@
                 />
               </a>
             </div>
+            <div class="ts-space50"></div>
+            <TagNews
+              v-bind:tagsWithArticle="articleTags ? shuffle(articleTags).slice(0, 6) : []"
+            />
             <div class="ts-space50"></div>
             <OurSponsors />
           </div>
@@ -53,17 +64,16 @@
               </div>
               <!-- /.Block Style 7 -->
               <!-- Block Style 8 -->
-              <div class="col-12 col-lg-6">
-                <NewsSection01
-                  v-bind:subcategoryWithArticle01="
-                    subcategoryWithArticle01 ? subcategoryWithArticle01 : null
-                  "
-                />
-              </div>
-              <div class="col-12 col-lg-6">
+              <div
+                class="col-12 col-lg-6"
+                v-for="index in 4"
+                v-bind:key="index"
+              >
                 <NewsSection02
-                  v-bind:subcategoryWithArticle02="
-                    subcategoryWithArticle02 ? subcategoryWithArticle02 : null
+                  v-bind:subcategoryWithArticle="
+                    articleSubcategories[index]
+                      ? shuffle(articleSubcategories)[index]
+                      : null
                   "
                 />
               </div>
@@ -87,6 +97,15 @@
                   </a>
                 </div>
                 <div class="ts-space50"></div>
+                <div class="block-style-4">
+                  <a href="#">
+                    <img
+                      class="img-fluid"
+                      src="../assets/images/ads_01.jpg"
+                      alt="Zola"
+                    />
+                  </a>
+                </div>
               </div>
               <!-- Block Style 6 & 4 -->
             </div>
@@ -96,16 +115,16 @@
         <div class="row">
           <!-- Block Style 1 -->
           <div class="col-12 col-lg-3">
-            <EditorPicks
-              v-bind:articleEditorsPicks="
-                articleEditorsPicks ? articleEditorsPicks : []
-              "
+            <TagNews
+              v-bind:tagsWithArticle="articleTags ? shuffle(articleTags) : []"
             />
           </div>
           <!-- /.Block Style 1 -->
           <!-- Block Style 9 -->
           <div class="col-12 col-lg-5">
-            <NewsSection03 v-bind:articles="articles ? articles : []" />
+            <NewsSection03
+              v-bind:articles="articles ? articles.slice(3) : []"
+            />
             <div class="load-more-btn" v-if="articles.length > 0">
               <a @click="moreArticles()" class="btn">{{ $t("loadMore") }}</a>
             </div>
@@ -114,9 +133,9 @@
           <!-- /.Block Style 9 -->
           <!-- Block Style 10, 11 -->
           <div class="col-12 col-lg-4">
-            <TerndingNews />
+            <Authors v-bind:authors="authors ? authors : []" />
             <div class="ts-space50"></div>
-            <RecentComments style="display: none;"/>
+            <RecentComments style="display: none" />
           </div>
           <!-- /.Block Style 10, 11 -->
         </div>
@@ -128,16 +147,16 @@
 
 <script>
 import Slider from "../components/home/Slider";
-import MostRead from "../components/home/MostRead";
-import TopComments from "../components/home/TopComments";
+import Pinned from "../components/home/Pinned";
+import NewsSection01 from "../components/home/NewsSection01";
 import StayConnected from "../components/home/StayConnected";
 import OurSponsors from "../components/home/OurSponsors";
-import NewsSection01 from "../components/home/NewsSection01";
 import NewsSection02 from "../components/home/NewsSection02";
 import TwitterFeed from "../components/home/TwitterFeed";
 import EditorPicks from "../components/home/EditorPicks";
 import NewsSection03 from "../components/home/NewsSection03";
-import TerndingNews from "../components/home/TerndingNews";
+import TagNews from "../components/home/TagNews";
+import Authors from "../components/home/Authors";
 import RecentComments from "../components/home/RecentComments";
 import gql from "graphql-tag";
 
@@ -145,25 +164,27 @@ export default {
   name: "PageIndex",
   components: {
     Slider,
-    MostRead,
-    TopComments,
+    Pinned,
+    NewsSection01,
     StayConnected,
     OurSponsors,
-    NewsSection01,
     NewsSection02,
     TwitterFeed,
     EditorPicks,
     NewsSection03,
-    TerndingNews,
-    RecentComments,
+    TagNews,
+    Authors,
+    RecentComments
   },
   data() {
     return {
-      start: 0,
       limit: 5,
       articles: [],
       articleSubcategories: [],
-      articleEditorsPicks: []
+      editorsPicks: [],
+      articleTags: [],
+      articlesPinned: [],
+      authors: []
     };
   },
   apollo: {
@@ -178,13 +199,12 @@ export default {
                 article_category: { language: { acronym_contains: $acronym } }
               }
             }
-            sort: "published_at:DESC"
+            sort: "created_at:DESC"
           ) {
             id
             title
             content
-            editor_pick
-            published_at
+            created_at
             media {
               url
             }
@@ -196,14 +216,9 @@ export default {
                 name
                 language {
                   id
-                  name
                   acronym
                 }
               }
-            }
-            article_tags {
-              id
-              name
             }
             admin_user {
               username
@@ -213,21 +228,20 @@ export default {
       `,
       variables() {
         return {
-          limit: this.limit,
-          start: this.start,
           acronym: this.$i18n.locale,
+          start: 0,
+          limit: this.limit
         };
-      },
+      }
     },
     articleSubcategories: {
       query: gql`
-        query articlesSubcategories($acronym: String!) {
+        query articlesSubcategories($limit: Int!, $acronym: String!) {
           articleSubcategories(
             where: {
               article_category: { language: { acronym_contains: $acronym } }
               articles_gt: 0
             }
-            sort: "published_at:DESC"
           ) {
             id
             name
@@ -236,15 +250,14 @@ export default {
               name
               language {
                 id
-                name
                 acronym
               }
             }
-            articles(limit: 1) {
+            articles(limit: $limit, sort: "created_at:DESC") {
               id
               title
               content
-              published_at
+              created_at
               media {
                 id
                 url
@@ -259,25 +272,32 @@ export default {
       variables() {
         return {
           acronym: this.$i18n.locale,
+          limit: 1
         };
-      },
+      }
     },
-    articleEditorsPicks: {
+    editorsPicks: {
       query: gql`
-        query articleEditorsPicks($acronym: String!, $editor_pick: Boolean!) {
+        query editorsPicks(
+          $limit: Int!
+          $acronym: String!
+          $editor_pick: Boolean!
+        ) {
           articles(
+            limit: $limit
             where: {
               article_subcategory: {
                 article_category: { language: { acronym_contains: $acronym } }
-              },
+              }
               editor_pick: $editor_pick
             }
-            sort: "published_at:DESC"
+            sort: "created_at:DESC"
           ) {
             id
             title
             content
             editor_pick
+            created_at
             media {
               id
               url
@@ -301,17 +321,129 @@ export default {
       variables() {
         return {
           acronym: this.$i18n.locale,
-          editor_pick: true
+          editor_pick: true,
+          limit: 5
         };
       },
       update: data => data.articles
     },
+    articleTags: {
+      query: gql`
+        query articleTags(
+          $limit_tags: Int!
+          $limit_articles: Int!
+          $acronym: String!
+        ) {
+          articleTags(
+            limit: $limit_tags
+            where: { language: { acronym_contains: $acronym }, articles_gt: 0 }
+          ) {
+            id
+            name
+            language {
+              id
+              acronym
+            }
+            articles(limit: $limit_articles, sort: "created_at:DESC") {
+              id
+              title
+              created_at
+              media {
+                id
+                url
+              }
+            }
+          }
+        }
+      `,
+      variables() {
+        return {
+          acronym: this.$i18n.locale,
+          limit_articles: 1,
+          limit_tags: 20
+        };
+      }
+    },
+    articlesPinned: {
+      query: gql`
+        query articlesPinned(
+          $limit: Int!
+          $acronym: String!
+          $pinned: Boolean!
+        ) {
+          articles(
+            limit: $limit
+            where: {
+              article_subcategory: {
+                article_category: { language: { acronym_contains: $acronym } }
+              }
+              pinned: $pinned
+            }
+            sort: "created_at:DESC"
+          ) {
+            id
+            title
+            content
+            pinned
+            created_at
+            media {
+              id
+              url
+            }
+            article_subcategory {
+              id
+              article_category {
+                id
+                name
+                language {
+                  id
+                  acronym
+                }
+              }
+            }
+            admin_user {
+              username
+            }
+          }
+        }
+      `,
+      variables() {
+        return {
+          acronym: this.$i18n.locale,
+          pinned: true,
+          limit: 1
+        };
+      },
+      update: data => data.articles
+    },
+    authors: {
+      query: gql`
+        query authors {
+          authors{
+            id
+            name
+            last_name
+            about_me
+            created_at
+            photo {
+              id
+              url
+            }
+            admin_user {
+              username
+            }
+          }
+        }
+      `,
+      variables() {
+      },
+    },
   },
   methods: {
-    moreArticles: function () {
+    moreArticles: function() {
       this.limit = this.limit + 5;
     },
-    shuffle: function (array) {
+    shuffle: function(array) {
       var currentIndex = array.length,
         temporaryValue,
         randomIndex;
@@ -325,18 +457,7 @@ export default {
       }
 
       return array;
-    },
-  },
-  computed: {
-    lastArticle: function () {
-      return this.articles[0];
-    },
-    subcategoryWithArticle01: function () {
-      return this.shuffle(this.articleSubcategories)[0];
-    },
-    subcategoryWithArticle02: function () {
-      return this.shuffle(this.articleSubcategories)[0];
-    },
+    }
   },
 };
 </script>

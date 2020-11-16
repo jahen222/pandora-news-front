@@ -8,14 +8,44 @@
       <!-- Contents -->
       <div class="contents">
         <!-- Thumbnail -->
-        <div class="thumbnail-1">
+        <div class="thumbnail-1" v-if="isVideo(article.media[0].url)">
+          <Media
+            :id="article.media[0].url"
+            :kind="'video'"
+            :controls="true"
+            :src="[api_url + article.media[0].url]"
+            :style="{ width: '100%' }"
+          >
+          </Media>
+          <div class="overlay overlay-video">
+            <div class="overlay-content overlay-content-video">
+              <div class="list-users-02">
+                <ul class="images" style="display: none">
+                  <li>
+                    <img src="../../assets/images/profile_15.jpg" alt="Zola" />
+                  </li>
+                </ul>
+                <p>
+                  {{ $t("by") }}:
+                  <span>{{ article.admin_user.username }}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="thumbnail-1" v-else>
           <router-link
             :to="{
               name: 'article',
-              params: { id: article.id },
+              params: { id: article.id }
             }"
           >
-            <img :src="api_url + article.media[0].url" alt="Zola" />
+            <img
+              class="resize"
+              :src="api_url + article.media[0].url"
+              alt="Zola"
+              v-if="!isVideo(article.media[0].url)"
+            />
             <div class="overlay">
               <div class="overlay-content">
                 <div class="list-users-02">
@@ -41,7 +71,7 @@
         <div class="content-wrapper">
           <!-- Date -->
           <div class="date">
-            <h5>{{ getFormatDate(article.published_at) }}</h5>
+            <h5>{{ getFormatDate(article.created_at) }}</h5>
           </div>
           <!-- /.Date -->
           <!-- Title -->
@@ -49,11 +79,11 @@
             <router-link
               :to="{
                 name: 'article',
-                params: { id: article.id },
+                params: { id: article.id }
               }"
             >
               <h2>
-                <span v-if="getLabelNew(article.published_at) == true">NEW</span
+                <span v-if="getLabelNew(article.created_at) == true">NEW</span
                 >{{ article.title }}
               </h2>
             </router-link>
@@ -62,11 +92,11 @@
           <!-- Description -->
           <div class="desc">
             <p>
-              {{ article.content.slice(0, 160) }}...
+              {{ article.content.slice(0, 193) }}...
               <router-link
                 :to="{
                   name: 'article',
-                  params: { id: article.id },
+                  params: { id: article.id }
                 }"
                 >{{ $t("readMore") }}</router-link
               >
@@ -92,12 +122,18 @@
               >
                 <path
                   d="M424.7,55.841c-19.8-15.2-43.3-25-68.1-28.2c-42.6-5.6-84.3,7.4-115.8,35.6c-31.5-28.5-73.4-41.5-116.2-35.8
-													c-24.8,3.3-48.4,13.2-68.3,28.6c-35.8,27.9-56.4,69.6-56.3,114.6c0,38.5,15.1,74.8,42.4,102.1l172.9,172.9
-													c6.6,6.6,15.2,9.8,23.8,9.8c8.6,0,17.2-3.3,23.8-9.8l26.8-26.8c7-7,7-18.4,0-25.5c-7-7-18.4-7-25.5,0l-25.1,25.1l-171.2-171.3
-													c-20.5-20.5-31.8-47.7-31.9-76.7c0-33.7,15.4-65.1,42.4-86.1c14.8-11.5,32.4-18.9,50.9-21.3c34.2-4.5,67.6,6.7,91.7,30.9
-													l19.8,19.8l19.6-19.6c24-24.1,57.4-35.3,91.5-30.8c18.5,2.4,36,9.7,50.8,21c28.2,21.7,43.8,54.4,42.8,89.6
-													c-0.8,27.7-12.9,54.6-33.9,75.7l-91.2,91.1c-7,7-7,18.4,0,25.5c7,7,18.4,7,25.5,0l91.2-91.2c27.6-27.6,43.4-63.1,44.4-100.1
-													C482.9,128.041,462.2,84.641,424.7,55.841z"
+
+c-24.8,3.3-48.4,13.2-68.3,28.6c-35.8,27.9-56.4,69.6-56.3,114.6c0,38.5,15.1,74.8,42.4,102.1l172.9,172.9
+
+c6.6,6.6,15.2,9.8,23.8,9.8c8.6,0,17.2-3.3,23.8-9.8l26.8-26.8c7-7,7-18.4,0-25.5c-7-7-18.4-7-25.5,0l-25.1,25.1l-171.2-171.3
+
+c-20.5-20.5-31.8-47.7-31.9-76.7c0-33.7,15.4-65.1,42.4-86.1c14.8-11.5,32.4-18.9,50.9-21.3c34.2-4.5,67.6,6.7,91.7,30.9
+
+l19.8,19.8l19.6-19.6c24-24.1,57.4-35.3,91.5-30.8c18.5,2.4,36,9.7,50.8,21c28.2,21.7,43.8,54.4,42.8,89.6
+
+c-0.8,27.7-12.9,54.6-33.9,75.7l-91.2,91.1c-7,7-7,18.4,0,25.5c7,7,18.4,7,25.5,0l91.2-91.2c27.6-27.6,43.4-63.1,44.4-100.1
+
+C482.9,128.041,462.2,84.641,424.7,55.841z"
                 />
               </svg>
               349
@@ -169,16 +205,34 @@
 </template>
 
 <script>
+import Media from "@dongido/vue-viaudio";
+
 export default {
   name: "NewsSection03",
   props: ["articles"],
+  components: {
+    Media
+  },
   data() {
     return {
       api_url: process.env.API,
+      videoFormats: [
+        "avi",
+        "wmv",
+        "asf",
+        "mov",
+        "flv",
+        "rm",
+        "rmvb",
+        "mp4",
+        "mkv",
+        "mks",
+        "3gpp"
+      ]
     };
   },
   methods: {
-    getFormatDate: function (datetime) {
+    getFormatDate: function(datetime) {
       var dateTime = new Date(datetime);
       const formattedDate =
         dateTime.getUTCMonth() +
@@ -190,12 +244,10 @@ export default {
         dateTime.getHours() +
         ":" +
         dateTime.getMinutes();
-      // ":" +
-      // dateTime.getSeconds()
 
       return formattedDate;
     },
-    getLabelNew: function (datetime) {
+    getLabelNew: function(datetime) {
       const articleDate = new Date(datetime);
       const todayDate = new Date();
       const diff = todayDate.getTime() - articleDate.getTime();
@@ -205,15 +257,24 @@ export default {
         return false;
       }
     },
-  },
-  /* computed: {
-    articlesByLanguage: function () {
-      var articles = this.articles.filter(
-        (article) => article.language === this.$t("language")
-      );
-
-      return articles;
-    },
-  }, */
+    isVideo: function(urlMedia) {
+      const format = urlMedia.split(".")[1];
+      return this.videoFormats.includes(format);
+    }
+  }
 };
 </script>
+
+<style scoped>
+.overlay-video {
+  position: relative !important;
+}
+.overlay-content-video {
+  bottom: 70px !important;
+  left: 20px !important;
+}
+.resize {
+  width: 100%;
+  height: 267px;
+}
+</style>

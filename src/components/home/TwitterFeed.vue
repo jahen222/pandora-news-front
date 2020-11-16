@@ -1,8 +1,7 @@
 <template>
   <div class="block-style-6">
     <div class="block-title-1">
-      <h3>TWITTER FEED</h3>
-      <img src="../../assets/images/svg/more-1.svg" alt="Zola" />
+      <h3>TWITTER</h3>
     </div>
     <div class="tweets">
       <!-- Item -->

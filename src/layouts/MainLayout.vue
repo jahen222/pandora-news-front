@@ -334,10 +334,7 @@
         <div class="container navbar-container">
           <!-- Logo -->
           <a class="navbar-brand background-logo" href="/"
-            ><img
-              src="../assets/pandora_news_logo.png"
-              width="140px"
-              alt="Zola"
+            ><img src="../assets/pandora_news_logo.png" width="140px" alt="Zola"
           /></a>
           <!-- /.Logo -->
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -401,7 +398,7 @@
                 </a>
                 <ul class="dropdown-menu">
                   <li
-                    class="dropdown-submenu dropdown"
+                    class="dropdown-submenu dropdown dropleft"
                     v-for="articleCategory in moreArticleCategories"
                     v-bind:key="articleCategory.id"
                   >
@@ -413,6 +410,7 @@
                       data-toggle="dropdown"
                       aria-haspopup="true"
                       aria-expanded="false"
+                      style="margin-left: 20px;"
                       v-if="articleCategory.article_subcategories.length > 0"
                     >
                       {{ articleCategory.name }}
@@ -559,57 +557,35 @@
           </div>
           <div class="ft-column col-md-12 col-lg-4">
             <h3>{{ $t("recentNews") }}</h3>
-            <div class="recentnews-02">
+            <div class="recentnews-02" v-if="articles.length > 0">
               <!-- Item -->
-              <div class="item">
-                <a href="#">
+              <div class="item" v-for="article in articles" :key="article.id">
+                <router-link
+                  :to="{
+                    name: 'article',
+                    params: { id: article.id }
+                  }"
+                >
                   <div class="icon">
                     <i class="fa fa-angle-double-right" aria-hidden="true"></i>
                   </div>
                   <div class="content">
-                    <p>The Canadian model has started its own tech</p>
-                    <span>6 MIN READ</span>
+                    <p>{{ article.title }}</p>
+                    <span>{{ getFormatDate(article.created_at) }}</span>
                   </div>
-                </a>
+                </router-link>
               </div>
               <!-- /.Item -->
+            </div>
+            <div class="recentnews-02" v-else>
               <!-- Item -->
               <div class="item">
-                <a href="#">
-                  <div class="icon">
-                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-                  </div>
-                  <div class="content">
-                    <p>The Canadian model has started its own tech</p>
-                    <span>6 MIN READ</span>
-                  </div>
-                </a>
-              </div>
-              <!-- /.Item -->
-              <!-- Item -->
-              <div class="item">
-                <a href="#">
-                  <div class="icon">
-                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-                  </div>
-                  <div class="content">
-                    <p>The Canadian model has started its own tech</p>
-                    <span>6 MIN READ</span>
-                  </div>
-                </a>
-              </div>
-              <!-- /.Item -->
-              <!-- Item -->
-              <div class="item">
-                <a href="#">
-                  <div class="icon">
-                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-                  </div>
-                  <div class="content">
-                    <p>The Canadian model has started its own tech</p>
-                    <span>6 MIN READ</span>
-                  </div>
-                </a>
+                <div class="icon">
+                  <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                </div>
+                <div class="content">
+                  <p>{{ $t("noArticles") }}</p>
+                </div>
               </div>
               <!-- /.Item -->
             </div>
@@ -652,25 +628,19 @@ import "../assets/js/swiper.min.js";
 import "../assets/js/nprogress.js";
 import "../assets/js/easy-waypoint-animate.js";
 import "../assets/js/scripts.js";
-// import "../assets/css/bootstrap.min.css";
-// import "../assets/css/owl.carousel.min.css";
-// import "../assets/js/jquery.countup.js";
-// import "../assets/js/jquery.newsTicker.min.js";
-// import "../assets/js/jquery.min.js";
-// import "../assets/js/popper.js";
-// import "../assets/js/bootstrap.min.js";
 import LanguageSwitcher from "../components/layouts/LanguageSwitcher";
 import gql from "graphql-tag";
 
 export default {
   name: "MainLayout",
   components: {
-    LanguageSwitcher,
+    LanguageSwitcher
   },
   data() {
     return {
       articleCategories: [],
       now: Date.now(),
+      articles: []
     };
   },
   apollo: {
@@ -696,13 +666,53 @@ export default {
       `,
       variables() {
         return {
-          acronym: this.$i18n.locale,
+          acronym: this.$i18n.locale
         };
-      },
+      }
     },
+    articles: {
+      query: gql`
+        query articles($limit: Int!, $start: Int!, $acronym: String!) {
+          articles(
+            limit: $limit
+            start: $start
+            where: {
+              article_subcategory: {
+                article_category: { language: { acronym_contains: $acronym } }
+              }
+            }
+            sort: "created_at:DESC"
+          ) {
+            id
+            title
+            created_at
+            article_subcategory {
+              id
+              article_category {
+                id
+                language {
+                  id
+                  acronym
+                }
+              }
+            }
+            admin_user {
+              username
+            }
+          }
+        }
+      `,
+      variables() {
+        return {
+          acronym: this.$i18n.locale,
+          start: 0,
+          limit: 3
+        };
+      }
+    }
   },
   methods: {
-    getFormatDate: function (datetime) {
+    getFormatDate: function(datetime) {
       var dateTime = new Date(datetime);
       const formattedDate =
         dateTime.getUTCMonth() +
@@ -718,26 +728,26 @@ export default {
         dateTime.getSeconds();
 
       return formattedDate;
-    },
+    }
   },
   computed: {
-    fewArticleCategories: function () {
+    fewArticleCategories: function() {
       var articleCategories = this.articleCategories;
 
-      return articleCategories.slice(0, 5);
+      return articleCategories.slice(0, 6);
     },
-    moreArticleCategories: function () {
+    moreArticleCategories: function() {
       var articleCategories = this.articleCategories;
 
-      return articleCategories.slice(5);
-    },
+      return articleCategories.slice(6);
+    }
   },
   created() {
     var self = this;
-    setInterval(function () {
+    setInterval(function() {
       self.now = Date.now();
     }, 1000);
-  },
+  }
 };
 </script>
 

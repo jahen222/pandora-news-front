@@ -13,7 +13,7 @@
                     <span>{{
                       article.article_subcategory.article_category.name.toUpperCase()
                     }}</span>
-                    {{ getFormatDate(article.published_at) }}
+                    {{ getFormatDate(article.created_at) }}
                   </h6>
                   <h1>
                     {{ article.title }}
@@ -95,20 +95,37 @@
                 </div>
                 <!-- /.Block Style 16 -->
                 <!-- Block Style 17 -->
-                <div class="block-style-17" v-if="article.media.length === 1">
+                <div
+                  class="block-style-17 text-center"
+                  v-if="article.media.length === 1"
+                >
                   <span class="bg-orange">{{
                     article.article_subcategory.name
                   }}</span>
+                  <Media
+                    :id="article.media[0].url"
+                    :kind="'video'"
+                    :controls="true"
+                    :src="[api_url + article.media[0].url]"
+                    :style="{ width: '100%' }"
+                    v-if="isVideo(article.media[0].url)"
+                  >
+                  </Media>
                   <img
                     class="img-fluid"
                     :src="api_url + article.media[0].url"
                     alt="Zola"
+                    v-else
                   />
                 </div>
-                <Slider
-                  v-bind:medias="article.media ? article.media : []"
-                  v-else
-                />
+                <div class="block-style-17" v-else>
+                  <span class="bg-orange">{{
+                    article.article_subcategory.name
+                  }}</span>
+                  <Carousel
+                    v-bind:medias="article.media ? article.media : []"
+                  />
+                </div>
                 <!-- /.Block Style 17 -->
                 <!-- Block Style 18 -->
                 <div class="block-style-18">
@@ -176,7 +193,7 @@
                     <!-- Item -->
                     <div
                       class="item"
-                      v-for="article in relatedArticles"
+                      v-for="article in relatedArticles.slice(0, 3)"
                       v-bind:key="article.id"
                     >
                       <router-link
@@ -184,10 +201,20 @@
                         target="_blank"
                       >
                         <div class="thumbnail">
+                          <Media
+                            :id="article.media[0].url"
+                            :kind="'video'"
+                            :controls="true"
+                            :src="[api_url + article.media[0].url]"
+                            :style="{ width: '100%' }"
+                            v-if="isVideo(article.media[0].url)"
+                          >
+                          </Media>
                           <img
-                            class="img-responsive"
+                            class="img-responsive resize"
                             :src="api_url + article.media[0].url"
                             alt="Zola"
+                            v-else
                           />
                         </div>
                         <div class="description">
@@ -213,180 +240,63 @@
           </div>
           <!-- Block Style 3, 4, 5 -->
           <div class="col-12 col-lg-4">
-            <div class="block-style-10">
+            <div class="block-style-10" v-if="articles.length > 0">
               <div class="block-title-1">
-                <h3>TRENDING NEWS</h3>
-                <img src="../assets/images/svg/more-1.svg" alt="Zola" />
+                <h3>{{ $t("recentNews") }}</h3>
+              </div>
+              <div class="small-list-posts">
+                <!-- Item -->
+                <div class="item" v-for="article in articles" :key="article.id">
+                  <div class="thumbnail-img">
+                    <img
+                      class="resizeMini"
+                      :src="api_url + article.media[0].url"
+                      alt="Zola"
+                      v-if="!isVideo(article.media[0].url)"
+                    />
+                  </div>
+                  <div class="content">
+                    <router-link
+                      :to="{
+                        name: 'article',
+                        params: { id: article.id }
+                      }"
+                      target="_blank"
+                    >
+                      <h3>{{ article.title }}</h3>
+                    </router-link>
+                    <span>{{ getFormatDate(article.created_at) }}</span>
+                  </div>
+                </div>
+                <!-- Item -->
+              </div>
+            </div>
+            <div class="block-style-10" v-else>
+              <div class="block-title-1">
+                <h3>{{ $t("recentNews") }}</h3>
               </div>
               <div class="small-list-posts">
                 <!-- Item -->
                 <div class="item">
-                  <a href="#">
-                    <div class="thumbnail-img">
-                      <img src="../assets/images/thumbnail_19.jpg" alt="Zola" />
-                    </div>
-                    <div class="content">
-                      <h3>The Canadian model has started its own technology</h3>
-                      <span>5 MIN AGO</span>
-                    </div>
-                  </a>
-                </div>
-                <!-- Item -->
-                <!-- Item -->
-                <div class="item">
-                  <a href="#">
-                    <div class="thumbnail-img">
-                      <img src="../assets/images/thumbnail_20.jpg" alt="Zola" />
-                    </div>
-                    <div class="content">
-                      <h3>
-                        The Last Statements of the host of the most watched
-                      </h3>
-                      <span>9 MIN AGO</span>
-                    </div>
-                  </a>
-                </div>
-                <!-- Item -->
-                <!-- Item -->
-                <div class="item">
-                  <a href="#">
-                    <div class="thumbnail-img">
-                      <img src="../assets/images/thumbnail_21.jpg" alt="Zola" />
-                    </div>
-                    <div class="content">
-                      <h3>
-                        the Favorite places to venture for travelers from all
-                        over the
-                      </h3>
-                      <span>21 MIN AGO</span>
-                    </div>
-                  </a>
-                </div>
-                <!-- Item -->
-                <!-- Item -->
-                <div class="item">
-                  <a href="#">
-                    <div class="thumbnail-img">
-                      <img src="../assets/images/thumbnail_22.jpg" alt="Zola" />
-                    </div>
-                    <div class="content">
-                      <h3>
-                        The British singer ventures into the world of cinema and
-                      </h3>
-                      <span>8 MIN AGO</span>
-                    </div>
-                  </a>
+                  <div class="content">
+                    <h3>{{ $t("noArticles") }}</h3>
+                  </div>
                 </div>
                 <!-- Item -->
               </div>
             </div>
             <div class="ts-space50"></div>
-            <div class="block-style-5">
-              <div class="block-title">
-                <h3>OUR SPONSORS</h3>
-              </div>
-              <div class="block-content">
-                <div class="block-wrapper">
-                  <ul>
-                    <li>
-                      <a href="#"
-                        ><img
-                          class="img-fluid"
-                          src="../assets/images/ads_02.jpg"
-                          alt="Zola"
-                      /></a>
-                    </li>
-                    <li>
-                      <a href="#"
-                        ><img
-                          class="img-fluid"
-                          src="../assets/images/ads_03.jpg"
-                          alt="Zola"
-                      /></a>
-                    </li>
-                    <li>
-                      <a href="#"
-                        ><img
-                          class="img-fluid"
-                          src="../assets/images/ads_04.jpg"
-                          alt="Zola"
-                      /></a>
-                    </li>
-                    <li>
-                      <a href="#"
-                        ><img
-                          class="img-fluid"
-                          src="../assets/images/ads_05.jpg"
-                          alt="Zola"
-                      /></a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
+            <div class="block-style-4">
+              <a href="#">
+                <img
+                  class="img-fluid"
+                  src="../assets/images/ads_01.jpg"
+                  alt="Zola"
+                />
+              </a>
             </div>
             <div class="ts-space50"></div>
-            <div class="block-style-6">
-              <div class="block-title-1">
-                <h3>TWITTER FEED</h3>
-                <img src="../assets/images/svg/more-1.svg" alt="Zola" />
-              </div>
-              <div class="tweets">
-                <!-- Item -->
-                <div class="item">
-                  <a href="#">
-                    <div class="tweet-img">
-                      <img src="../assets/images/tweet-img2.png" alt="Zola" />
-                    </div>
-                    <div class="tweet-content">
-                      <i class="fa fa-twitter"></i>
-                      <h5>Zola News <span>@ZolaNews</span></h5>
-                      <p>
-                        Phasellus pulvinar iaculis nunc at placerat. Sed porta
-                        sollicitudin eros, vel sagittis turpis consequat
-                        <span>envato.d.pr/h7ivMe</span>
-                      </p>
-                    </div>
-                  </a>
-                </div>
-                <!-- /.Item -->
-                <!-- Item -->
-                <div class="item">
-                  <a href="#">
-                    <div class="tweet-img">
-                      <img src="../assets/images/tweet-img2.png" alt="Zola" />
-                    </div>
-                    <div class="tweet-content">
-                      <i class="fa fa-twitter"></i>
-                      <h5>Zola News <span>@ZolaNews</span></h5>
-                      <p>
-                        Phasellus pulvinar iaculis nunc at placerat. Sed porta
-                        sollicitudin eros, vel sagittis turpis consequat
-                        <span>envato.d.pr/h7ivMe</span>
-                      </p>
-                    </div>
-                  </a>
-                </div>
-                <!-- /.Item -->
-                <!-- Item -->
-                <div class="item">
-                  <a href="#">
-                    <div class="tweet-img">
-                      <img src="../assets/images/tweet-img2.png" alt="Zola" />
-                    </div>
-                    <div class="tweet-content">
-                      <i class="fa fa-twitter"></i>
-                      <h5>Zola News <span>@ZolaNews</span></h5>
-                      <p>
-                        Phasellus pulvinar iaculis nunc at placerat. Sed porta
-                        sollicitudin eros, vel sagittis turpis consequat
-                        <span>envato.d.pr/h7ivMe</span>
-                      </p>
-                    </div>
-                  </a>
-                </div>
-                <!-- /.Item -->
-              </div>
-            </div>
+            <OurSponsors />
             <div class="ts-space50"></div>
             <div class="block-style-4">
               <a href="#">
@@ -409,13 +319,17 @@
 import gql from "graphql-tag";
 import marked from "marked";
 import FacebookComments from "../components/article/FacebookComments";
-import Slider from "../components/article/Slider";
+import Carousel from "../components/article/Carousel";
+import Media from "@dongido/vue-viaudio";
+import OurSponsors from "../components/home/OurSponsors";
 
 export default {
   name: "Article",
   components: {
     FacebookComments,
-    Slider
+    Carousel,
+    Media,
+    OurSponsors
   },
   data() {
     return {
@@ -424,6 +338,20 @@ export default {
       api_url: process.env.API,
       tagArticleslimit: 3,
       lang: this.$i18n.locale,
+      articles: [],
+      videoFormats: [
+        "avi",
+        "wmv",
+        "asf",
+        "mov",
+        "flv",
+        "rm",
+        "rmvb",
+        "mp4",
+        "mkv",
+        "mks",
+        "3gpp"
+      ]
     };
   },
   apollo: {
@@ -435,6 +363,7 @@ export default {
             title
             content
             published_at
+            created_at
             media {
               url
             }
@@ -472,13 +401,57 @@ export default {
       variables() {
         return {
           article_id: this.articleId,
-          tagArticleLimit: this.tagArticleslimit,
+          tagArticleLimit: this.tagArticleslimit
         };
-      },
+      }
     },
+    articles: {
+      query: gql`
+        query articles($limit: Int!, $start: Int!, $acronym: String!) {
+          articles(
+            limit: $limit
+            start: $start
+            where: {
+              article_subcategory: {
+                article_category: { language: { acronym_contains: $acronym } }
+              }
+            }
+            sort: "created_at:DESC"
+          ) {
+            id
+            title
+            media {
+              id
+              url
+            }
+            created_at
+            article_subcategory {
+              id
+              article_category {
+                id
+                language {
+                  id
+                  acronym
+                }
+              }
+            }
+            admin_user {
+              username
+            }
+          }
+        }
+      `,
+      variables() {
+        return {
+          acronym: this.$i18n.locale,
+          start: 0,
+          limit: 10
+        };
+      }
+    }
   },
   methods: {
-    getFormatDate: function (datetime) {
+    getFormatDate: function(datetime) {
       var dateTime = new Date(datetime);
       const formattedDate =
         dateTime.getUTCMonth() +
@@ -493,7 +466,7 @@ export default {
 
       return formattedDate;
     },
-    shuffle: function (array) {
+    shuffle: function(array) {
       var currentIndex = array.length,
         temporaryValue,
         randomIndex;
@@ -508,9 +481,25 @@ export default {
 
       return array;
     },
+    isVideo: function(urlMedia) {
+      const format = urlMedia.split(".")[1];
+      return this.videoFormats.includes(format);
+    }
+    /* handleTimeupdateEvent: function(componentId) {
+      var video = document.getElementById(componentId);
+      video.addEventListener(
+        "timeupdate",
+        function() {
+          if (this.currentTime >= 5) {
+            this.pause();
+          }
+        },
+        false
+      );
+    } */
   },
   computed: {
-    relatedArticles: function () {
+    relatedArticles: function() {
       var tagsArticles = [];
 
       const tagArticles = this.article.article_tags;
@@ -526,7 +515,7 @@ export default {
 
       return this.shuffle(tagsArticles).slice(0, 4);
     },
-    formatContent: function () {
+    formatContent: function() {
       return marked(
         this.article.content.replace(/\/uploads\//g, this.api_url + "/uploads/")
       )
@@ -535,7 +524,7 @@ export default {
           '<img style="margin-left: auto;margin-right: auto; display: block; width: 100%;"'
         )
         .replace(/\/p>/g, "/p><br />");
-    },
+    }
   },
   beforeUpdate() {
     if (this.article.language === "spanish") {
@@ -543,6 +532,17 @@ export default {
     } else if (this.article.language === "english") {
       this.$i18n.locale = "en-us";
     }
-  },
+  }
 };
 </script>
+
+<style scoped>
+.resize {
+  width: 100%;
+  height: 150px;
+}
+.resizeMini {
+  width: 75px;
+  height: 75px;
+}
+</style>

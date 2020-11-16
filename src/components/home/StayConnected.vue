@@ -1,8 +1,7 @@
 <template>
   <div class="block-style-3">
     <div class="block-title-1">
-      <h3>STAY CONNECTED</h3>
-      <img src="../../assets/images/svg/more-1.svg" alt="Zola" />
+      <h3>{{ $t('stayConnected') }}</h3>
     </div>
     <div class="block-content">
       <!-- Item -->
@@ -13,14 +12,14 @@
           </div>
           <div class="followers">
             <div class="content">
-              <span class="count">75.820 +</span>
-              <span class="text">FANS</span>
+              <span class="count">75.820</span>
+              <span class="text">{{ $t('fans') }}</span>
             </div>
           </div>
         </div>
         <div class="block-right">
           <div class="content">
-            <a href="#">Like Page</a>
+            <a href="#">{{ $t('likePage') }}</a>
           </div>
         </div>
       </div>
@@ -33,14 +32,14 @@
           </div>
           <div class="followers">
             <div class="content">
-              <span class="count">27.257 +</span>
+              <span class="count">27.257</span>
               <span class="text">FOLLOWERS</span>
             </div>
           </div>
         </div>
         <div class="block-right">
           <div class="content">
-            <a href="#">Like Page</a>
+            <a href="#">{{ $t('follow') }}</a>
           </div>
         </div>
       </div>
@@ -60,7 +59,7 @@
         </div>
         <div class="block-right">
           <div class="content">
-            <a href="#">Like Page</a>
+            <a href="#">{{ $t('follow') }}</a>
           </div>
         </div>
       </div>

@@ -12,7 +12,7 @@
             <router-link
               :to="{
                 name: 'article',
-                params: { id: lastArticle.id },
+                params: { id: lastArticle.id }
               }"
             >
               <h1>
@@ -161,7 +161,14 @@
     </div>
     <!-- /.Slider Content -->
     <!-- Slider Image -->
-    <div class="slider-image">
+    <div class="slider-image" v-if="isVideo(lastArticle.media[0].url)">
+      <img
+        class="img-fluid"
+        src="../../assets/images/slider_back.webp"
+        alt="Zola"
+      />
+    </div>
+    <div class="slider-image" v-else>
       <img
         class="img-fluid"
         :src="api_url + lastArticle.media[0].url"
@@ -190,7 +197,11 @@
     <!-- /.Slider Content -->
     <!-- Slider Image -->
     <div class="slider-image">
-      <img class="img-fluid" src="../../assets/images/slider1.jpg" alt="Zola" />
+      <img
+        class="img-fluid"
+        src="../../assets/images/slider_back.webp"
+        alt="Zola"
+      />
     </div>
     <!-- /.Slider Image -->
   </div>
@@ -203,8 +214,27 @@ export default {
   data() {
     return {
       api_url: process.env.API,
+      videoFormats: [
+        "avi",
+        "wmv",
+        "asf",
+        "mov",
+        "flv",
+        "rm",
+        "rmvb",
+        "mp4",
+        "mkv",
+        "mks",
+        "3gpp"
+      ]
     };
   },
+  methods: {
+    isVideo: function(urlMedia) {
+      const format = urlMedia.split(".")[1];
+      return this.videoFormats.includes(format);
+    }
+  }
 };
 </script>
 
@@ -220,5 +250,8 @@ export default {
   left: 0;
   right: 0;
   background-color: rgba(0, 0, 0, 0.3);
+}
+#section-slider.slider01 {
+  width: 100%;
 }
 </style>

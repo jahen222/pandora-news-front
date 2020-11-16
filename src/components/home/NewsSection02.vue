@@ -1,18 +1,55 @@
 <template>
-  <div class="block-style-8" v-if="subcategoryWithArticle02 != null">
+  <div class="block-style-8" v-if="subcategoryWithArticle != null">
     <!-- Block Title 2 -->
     <div class="block-title-2">
-      <h3>{{ subcategoryWithArticle02.article_category.name }}</h3>
+      <h3>{{ subcategoryWithArticle.article_category.name }}</h3>
     </div>
     <!-- /.Block Title 2 -->
     <!-- Contents -->
     <div class="contents">
       <!-- Thumbnail -->
-      <div class="thumbnail-1">
-        <span class="bg-red">{{ subcategoryWithArticle02.name }}</span>
-        <a href="#">
+      <div
+        class="thumbnail-1"
+        v-if="isVideo(subcategoryWithArticle.articles[0].media[0].url)"
+      >
+        <span class="bg-orange">{{ subcategoryWithArticle.name }}</span>
+        <Media
+          :id="subcategoryWithArticle.articles[0].media[0].url"
+          :kind="'video'"
+          :controls="true"
+          :src="[api_url + subcategoryWithArticle.articles[0].media[0].url]"
+          :style="{ width: '100%' }"
+        >
+        </Media>
+        <div class="overlay overlay-video">
+          <div class="overlay-content overlay-content-video">
+            <div class="list-users-02">
+              <ul class="images" style="display: none">
+                <li>
+                  <img src="../../assets/images/profile_11.jpg" alt="Zola" />
+                </li>
+              </ul>
+              <p>
+                {{ $t("by") }}:
+                <span>{{
+                  subcategoryWithArticle.articles[0].admin_user.username
+                }}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="thumbnail-1" v-else>
+        <span class="bg-orange">{{ subcategoryWithArticle.name }}</span>
+        <router-link
+          :to="{
+            name: 'article',
+            params: { id: subcategoryWithArticle.articles[0].id }
+          }"
+        >
           <img
-            :src="api_url + subcategoryWithArticle02.articles[0].media[0].url"
+            class="resize"
+            :src="api_url + subcategoryWithArticle.articles[0].media[0].url"
             alt="Zola"
           />
           <div class="overlay">
@@ -26,13 +63,13 @@
                 <p>
                   {{ $t("by") }}:
                   <span>{{
-                    subcategoryWithArticle02.articles[0].admin_user.username
+                    subcategoryWithArticle.articles[0].admin_user.username
                   }}</span>
                 </p>
               </div>
             </div>
           </div>
-        </a>
+        </router-link>
       </div>
       <!-- /.Thumbnail -->
       <!-- Content Wrapper -->
@@ -40,9 +77,7 @@
         <!-- Date -->
         <div class="date">
           <h5>
-            {{
-              getFormatDate(subcategoryWithArticle02.articles[0].published_at)
-            }}
+            {{ getFormatDate(subcategoryWithArticle.articles[0].created_at) }}
           </h5>
         </div>
         <!-- /.Date -->
@@ -51,24 +86,25 @@
           <router-link
             :to="{
               name: 'article',
-              params: { id: subcategoryWithArticle02.articles[0].id },
+              params: { id: subcategoryWithArticle.articles[0].id }
             }"
           >
-            <h2>{{ subcategoryWithArticle02.articles[0].title }}</h2>
+            <h2>{{ subcategoryWithArticle.articles[0].title }}</h2>
           </router-link>
         </div>
         <!-- /.Title -->
         <!-- Description -->
         <div class="desc">
           <p>
-            {{ subcategoryWithArticle02.articles[0].content.slice(0, 550) }}...
-              <router-link
-                :to="{
-                  name: 'article',
-                  params: { id: subcategoryWithArticle02.articles[0].id },
-                }"
-                >{{ $t("readMore") }}</router-link
-              >
+            {{ subcategoryWithArticle.articles[0].content.slice(0, 128) }}...
+            <router-link
+              class="readMore"
+              :to="{
+                name: 'article',
+                params: { id: subcategoryWithArticle.articles[0].id }
+              }"
+              >{{ $t("readMore") }}</router-link
+            >
           </p>
         </div>
         <!-- /.Description -->
@@ -128,7 +164,7 @@
       <div class="content-wrapper">
         <!-- Title -->
         <div class="title">
-            <h2>{{ $t("noArticles") }}</h2>
+          <h2>{{ $t("noArticles") }}</h2>
         </div>
         <!-- /.Title -->
       </div>
@@ -139,16 +175,34 @@
 </template>
 
 <script>
+import Media from "@dongido/vue-viaudio";
+
 export default {
   name: "NewsSection02",
-  props: ["subcategoryWithArticle02"],
+  props: ["subcategoryWithArticle"],
+  components: {
+    Media
+  },
   data() {
     return {
       api_url: process.env.API,
+      videoFormats: [
+        "avi",
+        "wmv",
+        "asf",
+        "mov",
+        "flv",
+        "rm",
+        "rmvb",
+        "mp4",
+        "mkv",
+        "mks",
+        "3gpp"
+      ]
     };
   },
   methods: {
-    getFormatDate: function (datetime) {
+    getFormatDate: function(datetime) {
       var dateTime = new Date(datetime);
       const formattedDate =
         dateTime.getUTCMonth() +
@@ -160,11 +214,32 @@ export default {
         dateTime.getHours() +
         ":" +
         dateTime.getMinutes();
-      // ":" +
-      // dateTime.getSeconds()
 
       return formattedDate;
     },
-  },
+    isVideo: function(urlMedia) {
+      const format = urlMedia.split(".")[1];
+      return this.videoFormats.includes(format);
+    }
+  }
 };
 </script>
+
+<style scoped>
+.overlay-video {
+  position: relative !important;
+}
+.overlay-content-video {
+  bottom: 70px !important;
+  left: 20px !important;
+}
+.resize {
+  width: 100%;
+  height: 200px;
+}
+.readMore:hover {
+  color: #f96d00;
+  -webkit-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+}
+</style>
